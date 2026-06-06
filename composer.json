@@ -52,9 +52,12 @@
         "exclude": [
             "/tests",
             "/stubs",
+            "/build",
+            "/coverage",
             "/phpunit.xml",
             "/phpstan.neon",
             "/.phpunit.cache",
+            "/.phpunit.result.cache",
             "/.github",
             "/.gitignore",
             "/.gitattributes"
