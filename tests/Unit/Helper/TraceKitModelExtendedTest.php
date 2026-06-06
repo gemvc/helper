@@ -231,7 +231,6 @@ class TraceKitModelExtendedTest extends TestCase
         // Manually remove start_time to test fallback
         $reflection = new ReflectionClass($model);
         $spansProperty = $reflection->getProperty('spans');
-        $spansProperty->setAccessible(true);
         $spans = $spansProperty->getValue($model);
         if (!empty($spans)) {
             unset($spans[0]['start_time']);
@@ -311,7 +310,6 @@ class TraceKitModelExtendedTest extends TestCase
         // Manually modify span to test missing fields
         $reflection = new ReflectionClass($model);
         $spansProperty = $reflection->getProperty('spans');
-        $spansProperty->setAccessible(true);
         $spans = $spansProperty->getValue($model);
         if (!empty($spans)) {
             $spans[0]['end_time'] = time() * 1000000000;
@@ -347,7 +345,6 @@ class TraceKitModelExtendedTest extends TestCase
         // Manually set parent_span_id to non-string
         $reflection = new ReflectionClass($model);
         $spansProperty = $reflection->getProperty('spans');
-        $spansProperty->setAccessible(true);
         $spans = $spansProperty->getValue($model);
         if (!empty($spans)) {
             $spans[0]['end_time'] = time() * 1000000000;
@@ -437,7 +434,6 @@ class TraceKitModelExtendedTest extends TestCase
         // Manually corrupt payload structure
         $reflection = new ReflectionClass($model);
         $spansProperty = $reflection->getProperty('spans');
-        $spansProperty->setAccessible(true);
         $spans = $spansProperty->getValue($model);
         if (!empty($spans)) {
             // Remove required fields to create invalid structure
@@ -460,8 +456,6 @@ class TraceKitModelExtendedTest extends TestCase
         // Mock buildTracePayload to return empty scopeSpans
         $reflection = new ReflectionClass($model);
         $method = $reflection->getMethod('buildTracePayload');
-        $method->setAccessible(true);
-        
         // We can't easily mock this, but we can test the flush logic
         $model->flush();
         
@@ -533,7 +527,6 @@ class TraceKitModelExtendedTest extends TestCase
         // Manually add event with non-string name
         $reflection = new ReflectionClass($model);
         $spansProperty = $reflection->getProperty('spans');
-        $spansProperty->setAccessible(true);
         $spans = $spansProperty->getValue($model);
         if (!empty($spans)) {
             $spans[0]['events'] = [
@@ -558,7 +551,6 @@ class TraceKitModelExtendedTest extends TestCase
         // Manually add event with non-int time
         $reflection = new ReflectionClass($model);
         $spansProperty = $reflection->getProperty('spans');
-        $spansProperty->setAccessible(true);
         $spans = $spansProperty->getValue($model);
         if (!empty($spans)) {
             $spans[0]['events'] = [
@@ -798,7 +790,6 @@ class TraceKitModelExtendedTest extends TestCase
         // Manually set events to non-array
         $reflection = new ReflectionClass($model);
         $spansProperty = $reflection->getProperty('spans');
-        $spansProperty->setAccessible(true);
         $spans = $spansProperty->getValue($model);
         if (!empty($spans)) {
             $spans[0]['events'] = 'not-an-array';
@@ -823,7 +814,6 @@ class TraceKitModelExtendedTest extends TestCase
         // Manually set events to non-array
         $reflection = new ReflectionClass($model);
         $spansProperty = $reflection->getProperty('spans');
-        $spansProperty->setAccessible(true);
         $spans = $spansProperty->getValue($model);
         if (!empty($spans)) {
             $spans[0]['events'] = 'not-an-array';
@@ -932,7 +922,6 @@ class TraceKitModelExtendedTest extends TestCase
         // Manually corrupt payload to have empty scopeSpans
         $reflection = new ReflectionClass($model);
         $method = $reflection->getMethod('buildTracePayload');
-        $method->setAccessible(true);
         $payload = $method->invoke($model);
         
         // This is hard to test directly, but we can ensure flush handles it
@@ -949,7 +938,6 @@ class TraceKitModelExtendedTest extends TestCase
     {
         $reflection = new ReflectionClass($object);
         $method = $reflection->getMethod($methodName);
-        $method->setAccessible(true);
         return $method;
     }
 }

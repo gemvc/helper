@@ -17,9 +17,8 @@ class ProjectHelperTest extends TestCase
         // Use reflection to reset the static $rootDir property
         $reflection = new \ReflectionClass(ProjectHelper::class);
         $property = $reflection->getProperty('rootDir');
-        $property->setAccessible(true);
         $this->originalRootDir = $property->getValue();
-        $property->setValue(null); // Reset to null
+        $property->setValue(null, null); // Reset to null
     }
     
     protected function tearDown(): void
@@ -28,8 +27,7 @@ class ProjectHelperTest extends TestCase
         if ($this->originalRootDir !== null) {
             $reflection = new \ReflectionClass(ProjectHelper::class);
             $property = $reflection->getProperty('rootDir');
-            $property->setAccessible(true);
-            $property->setValue($this->originalRootDir);
+            $property->setValue(null, $this->originalRootDir);
         }
         parent::tearDown();
     }
@@ -79,8 +77,7 @@ class ProjectHelperTest extends TestCase
         // Reset rootDir to test the lookup
         $reflection = new \ReflectionClass(ProjectHelper::class);
         $property = $reflection->getProperty('rootDir');
-        $property->setAccessible(true);
-        $property->setValue(null);
+        $property->setValue(null, null);
         
         // In the actual project, composer.lock should exist, so this should not throw
         try {
@@ -285,6 +282,15 @@ class ProjectHelperTest extends TestCase
 
     public function testGetLibrarySystemPagesPathResolvesExistingDirectory(): void
     {
+        $hasLibrary = class_exists(\Composer\InstalledVersions::class)
+            && \Composer\InstalledVersions::isInstalled('gemvc/library');
+        $fallback = dirname(__DIR__, 3) . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'startup'
+            . DIRECTORY_SEPARATOR . 'common' . DIRECTORY_SEPARATOR . 'system_pages';
+
+        if (!$hasLibrary && !is_dir($fallback)) {
+            $this->markTestSkipped('gemvc/library is not installed and monorepo fallback is unavailable');
+        }
+
         $path = ProjectHelper::getLibrarySystemPagesPath();
 
         $this->assertDirectoryExists($path);

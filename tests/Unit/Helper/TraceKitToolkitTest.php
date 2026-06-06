@@ -754,8 +754,6 @@ class TraceKitToolkitTest extends TestCase
         
         $reflection = new \ReflectionClass($toolkit);
         $method = $reflection->getMethod('requireApiKey');
-        $method->setAccessible(true);
-        
         $result = $method->invoke($toolkit);
         
         $this->assertNull($result);
@@ -770,8 +768,6 @@ class TraceKitToolkitTest extends TestCase
         
         $reflection = new \ReflectionClass($toolkit);
         $method = $reflection->getMethod('requireApiKey');
-        $method->setAccessible(true);
-        
         $result = $method->invoke($toolkit);
         
         $this->assertInstanceOf(JsonResponse::class, $result);
@@ -787,8 +783,6 @@ class TraceKitToolkitTest extends TestCase
         
         $reflection = new \ReflectionClass($toolkit);
         $method = $reflection->getMethod('createApiCall');
-        $method->setAccessible(true);
-        
         $apiCall = $method->invoke($toolkit, true, true);
         
         $this->assertInstanceOf(\Gemvc\Http\ApiCall::class, $apiCall);
@@ -805,8 +799,6 @@ class TraceKitToolkitTest extends TestCase
         
         $reflection = new \ReflectionClass($toolkit);
         $method = $reflection->getMethod('createApiCall');
-        $method->setAccessible(true);
-        
         $apiCall = $method->invoke($toolkit, false, false);
         
         $this->assertInstanceOf(\Gemvc\Http\ApiCall::class, $apiCall);
@@ -823,8 +815,6 @@ class TraceKitToolkitTest extends TestCase
         
         $reflection = new \ReflectionClass($toolkit);
         $method = $reflection->getMethod('createApiCall');
-        $method->setAccessible(true);
-        
         $apiCall = $method->invoke($toolkit, true, false);
         
         $this->assertInstanceOf(\Gemvc\Http\ApiCall::class, $apiCall);
@@ -841,8 +831,6 @@ class TraceKitToolkitTest extends TestCase
         
         $reflection = new \ReflectionClass($toolkit);
         $method = $reflection->getMethod('parseJsonResponse');
-        $method->setAccessible(true);
-        
         $json = json_encode(['id' => 1, 'name' => 'Test']);
         $result = $method->invoke($toolkit, $json, 'Test context');
         
@@ -861,8 +849,6 @@ class TraceKitToolkitTest extends TestCase
         
         $reflection = new \ReflectionClass($toolkit);
         $method = $reflection->getMethod('parseJsonResponse');
-        $method->setAccessible(true);
-        
         $result = $method->invoke($toolkit, 'invalid json', 'Test context');
         
         $this->assertInstanceOf(JsonResponse::class, $result);
@@ -878,8 +864,6 @@ class TraceKitToolkitTest extends TestCase
         
         $reflection = new \ReflectionClass($toolkit);
         $method = $reflection->getMethod('parseJsonResponse');
-        $method->setAccessible(true);
-        
         $result = $method->invoke($toolkit, false, 'Test context');
         
         $this->assertInstanceOf(JsonResponse::class, $result);
@@ -895,8 +879,6 @@ class TraceKitToolkitTest extends TestCase
         
         $reflection = new \ReflectionClass($toolkit);
         $method = $reflection->getMethod('parseJsonResponse');
-        $method->setAccessible(true);
-        
         $result = $method->invoke($toolkit, '"string"', 'Test context');
         
         $this->assertInstanceOf(JsonResponse::class, $result);
@@ -912,8 +894,6 @@ class TraceKitToolkitTest extends TestCase
         
         $reflection = new \ReflectionClass($toolkit);
         $method = $reflection->getMethod('parseJsonResponse');
-        $method->setAccessible(true);
-        
         $result = $method->invoke($toolkit, 'null', 'Test context');
         
         $this->assertInstanceOf(JsonResponse::class, $result);

@@ -2233,7 +2233,6 @@ class TraceKitModelTest extends TestCase
         // Ensure traceId is null
         $reflection = new \ReflectionClass($model);
         $traceIdProperty = $reflection->getProperty('traceId');
-        $traceIdProperty->setAccessible(true);
         $traceIdProperty->setValue($model, null);
         
         $result = $method->invoke($model);
@@ -2252,7 +2251,6 @@ class TraceKitModelTest extends TestCase
         $existingTraceId = '1234567890abcdef1234567890abcdef';
         $reflection = new \ReflectionClass($model);
         $traceIdProperty = $reflection->getProperty('traceId');
-        $traceIdProperty->setAccessible(true);
         $traceIdProperty->setValue($model, $existingTraceId);
         
         $result = $method->invoke($model);
@@ -2268,7 +2266,6 @@ class TraceKitModelTest extends TestCase
         // Ensure traceId is null
         $reflection = new \ReflectionClass($model);
         $traceIdProperty = $reflection->getProperty('traceId');
-        $traceIdProperty->setAccessible(true);
         $traceIdProperty->setValue($model, null);
         
         $result1 = $method->invoke($model);
@@ -2291,7 +2288,6 @@ class TraceKitModelTest extends TestCase
         // Get span index
         $reflection = new \ReflectionClass($model);
         $spansProperty = $reflection->getProperty('spans');
-        $spansProperty->setAccessible(true);
         $spans = $spansProperty->getValue($model);
         $spanIndex = 0; // First span
         
@@ -2319,7 +2315,6 @@ class TraceKitModelTest extends TestCase
         // Get span index
         $reflection = new \ReflectionClass($model);
         $spansProperty = $reflection->getProperty('spans');
-        $spansProperty->setAccessible(true);
         $spans = $spansProperty->getValue($model);
         $spanIndex = 0; // First span
         
@@ -2346,7 +2341,6 @@ class TraceKitModelTest extends TestCase
         // Manually remove events array to test initialization
         $reflection = new \ReflectionClass($model);
         $spansProperty = $reflection->getProperty('spans');
-        $spansProperty->setAccessible(true);
         $spans = $spansProperty->getValue($model);
         unset($spans[0]['events']);
         $spansProperty->setValue($model, $spans);
@@ -2375,7 +2369,6 @@ class TraceKitModelTest extends TestCase
         // Get span index
         $reflection = new \ReflectionClass($model);
         $spansProperty = $reflection->getProperty('spans');
-        $spansProperty->setAccessible(true);
         $spans = $spansProperty->getValue($model);
         $spanIndex = 0;
         
@@ -2415,7 +2408,6 @@ class TraceKitModelTest extends TestCase
         
         $reflection = new \ReflectionClass($model);
         $spansProperty = $reflection->getProperty('spans');
-        $spansProperty->setAccessible(true);
         $spans = $spansProperty->getValue($model);
         
         $addedEvent = $spans[0]['events'][0];
@@ -2617,7 +2609,6 @@ class TraceKitModelTest extends TestCase
     {
         $reflection = new ReflectionClass($object);
         $property = $reflection->getProperty($propertyName);
-        $property->setAccessible(true);
         return $property->getValue($object);
     }
     
@@ -2625,7 +2616,6 @@ class TraceKitModelTest extends TestCase
     {
         $reflection = new ReflectionClass($object);
         $method = $reflection->getMethod($methodName);
-        $method->setAccessible(true);
         return $method;
     }
 }

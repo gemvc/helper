@@ -42,7 +42,7 @@ class ProjectHelper
      */
     public static function getLibrarySystemPagesPath(): string
     {
-        if (class_exists(InstalledVersions::class)) {
+        if (class_exists(InstalledVersions::class) && InstalledVersions::isInstalled('gemvc/library')) {
             $libraryPath = InstalledVersions::getInstallPath('gemvc/library');
             if (is_string($libraryPath) && $libraryPath !== '') {
                 $systemPages = $libraryPath . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'startup'

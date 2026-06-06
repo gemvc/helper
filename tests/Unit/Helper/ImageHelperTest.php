@@ -70,7 +70,6 @@ class ImageHelperTest extends TestCase
                 break;
         }
         
-        imagedestroy($image);
         $this->tempFiles[] = $file;
         return $file;
     }

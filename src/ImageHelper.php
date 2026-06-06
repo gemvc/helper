@@ -214,11 +214,9 @@ class ImageHelper
 
         if (!imagewebp($image, $this->outputFile, $quality)) {
             $this->error = "Failed to create WebP image";
-            imagedestroy($image);
             return false;
         }
 
-        imagedestroy($image);
         return true;
     }
 
@@ -257,17 +255,14 @@ class ImageHelper
         $function = "image$type";
         if (!function_exists($function)) {
             $this->error = "Function $function does not exist";
-            imagedestroy($image);
             return false;
         }
 
         if (!$function($image, $this->outputFile, $quality)) {
             $this->error = "Failed to create $type image";
-            imagedestroy($image);
             return false;
         }
 
-        imagedestroy($image);
         return true;
     }
 
