@@ -137,7 +137,7 @@ class ProjectHelper
         $detectedPort = null;
         if (preg_match('/:(\d+)$/', $host, $matches)) {
             $detectedPort = (int) $matches[1];
-            $host = preg_replace('/:\d+$/', '', $host);
+            $host = preg_replace('/:\d+$/', '', $host) ?? $host;
         }
 
         if ($detectedPort !== null) {
@@ -227,7 +227,9 @@ class ProjectHelper
      */
     public static function getAppEnv(): string
     {
-        return $_ENV['APP_ENV'] ?? 'production';
+        $env = $_ENV['APP_ENV'] ?? 'production';
+
+        return is_string($env) ? $env : 'production';
     }
 
     /**
@@ -240,10 +242,10 @@ class ProjectHelper
             return;
         }
         if (function_exists('opcache_reset')) {
-            @opcache_reset();
+            @\opcache_reset();
         }
         if (function_exists('opcache_disable')) {
-            @opcache_disable();
+            @\opcache_disable();
         }
     }
 

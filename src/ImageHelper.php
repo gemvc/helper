@@ -11,7 +11,7 @@ class ImageHelper
     public ?string $error = null;
     public ?string $secret;
 
-    public function __construct(string $sourceFile, string $outputFile = null)
+    public function __construct(string $sourceFile, ?string $outputFile = null)
     {
         $this->error = null;
         $this->sourceFile = $sourceFile;

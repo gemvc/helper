@@ -33,5 +33,26 @@ class JsonResponse
      * @var string|null
      */
     public ?string $service_message = null;
+
+    /**
+     * @param mixed $data Response data
+     */
+    public function success(mixed $data, ?int $count = null, ?string $service_message = null): self
+    {
+        $this->response_code = 200;
+        $this->data = $data;
+        $this->service_message = $service_message;
+
+        return $this;
+    }
+
+    public function badRequest(?string $service_message = null): self
+    {
+        $this->response_code = 400;
+        $this->data = [];
+        $this->service_message = $service_message;
+
+        return $this;
+    }
 }
 

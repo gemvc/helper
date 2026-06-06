@@ -19,6 +19,11 @@ class ApiCall
      * @var array<string, string>
      */
     public array $header = [];
+
+    /**
+     * Authorization header value (e.g. Bearer token)
+     */
+    public string $authorizationHeader = '';
     
     /**
      * Error message if request failed
