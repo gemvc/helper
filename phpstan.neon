@@ -1,0 +1,13 @@
+parameters:
+    level: 9
+    paths:
+        - src
+    excludePaths:
+        - vendor/*
+    stubFiles:
+        - stubs/Gemvc/Http/ApiCall.php
+        - stubs/Gemvc/Http/AsyncApiCall.php
+        - stubs/Gemvc/Http/JsonResponse.php
+        - stubs/Gemvc/Http/Response.php
+    ignoreErrors:
+        - '#Possibly invalid array key type float\|int\.#'

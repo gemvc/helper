@@ -1,0 +1,9 @@
+# Exclude dev-only files from git archives (Packagist dist installs).
+/tests export-ignore
+/stubs export-ignore
+/phpunit.xml export-ignore
+/phpstan.neon export-ignore
+/.phpunit.cache export-ignore
+/.github export-ignore
+/.gitignore export-ignore
+/.gitattributes export-ignore
