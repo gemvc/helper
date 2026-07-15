@@ -29,7 +29,8 @@ composer require gemvc/library
 |-------|---------|
 | `ProjectHelper` | Project root, `.env`, URLs, library paths |
 | `CryptHelper` | Password hashing (Argon2i) |
-| `TypeChecker` / `TypeHelper` | Request schema type validation |
+| `TypeChecker` | HTTP input validation — see [supported types](#version-110--schema-validation-types) below |
+| `TypeHelper` | Type utilities (GUID, timestamps, reflection helpers) |
 | `FileHelper` | AES-256-CBC file encryption |
 | `ImageHelper` | WebP conversion |
 | `JsonHelper`, `StringHelper`, `WebHelper` | General utilities |
@@ -45,6 +46,20 @@ Namespace: `Gemvc\Helper\` (unchanged from monorepo layout).
 Some classes (`ChatGptClient`, legacy `TraceKitToolkit`) use `Gemvc\Http\*` from `gemvc/library` at **runtime** in real apps. When both packages are in `vendor/`, autoload resolves the real HTTP classes from the library.
 
 This package ships **HTTP stubs** under `stubs/` for standalone PHPUnit/PHPStan only (`autoload-dev`). They are not used when the package is installed as a dependency of `gemvc/library`.
+
+## Upgrading to 1.1.0
+
+See [RELEASE_NOTES.md](RELEASE_NOTES.md#version-110--schema-validation-types).
+
+**New `TypeChecker` types:** `decimal`, `decimal:P,S`, `hex`, `uuid`, `slug`, `positive_int`, `timestamp`, `jsonb` (alias of `json`).
+
+```php
+TypeChecker::check('decimal', '19.99');
+TypeChecker::check('uuid', '550e8400-e29b-41d4-a716-446655440000');
+TypeChecker::check('positive_int', '42', ['min' => 1, 'max' => 100]);
+```
+
+Requires `gemvc/library` **5.10.0+** for DB mapping and Request getters. Helper 1.1.0 adds validation only.
 
 ## Development
 
@@ -71,6 +86,6 @@ Future cleanup (TraceKit legacy removal, etc.) happens in this package only.
 
 1. Create repo `github.com/gemvc/helper`
 2. Copy **all contents** of this staging folder into the clone (repo root = package root; local folder name `gemvc-helper/` in the monorepo is only for staging)
-3. `composer install` then `composer test` && `composer phpstan` (PHPStan has 4 pre-existing issues carried from library — same as `src/helper/` today)
+3. `composer install` then `composer test` && `composer phpstan`
 4. Tag **v1.0.0** and publish to Packagist as `gemvc/helper`
 5. In `gemvc/library` release **5.8.1**: add `"gemvc/helper": "^1.0"`, remove `src/helper/` and `Gemvc\Helper\` autoload, run `composer update` and full test suite

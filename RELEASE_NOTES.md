@@ -1,4 +1,68 @@
-# gemvc/helper v1.0.0
+# gemvc/helper Release Notes
+
+---
+
+# Version 1.1.0 — Schema validation types
+
+**Release date:** 15 July 2026  
+**Tag:** `v1.1.0`  
+**Packagist:** [`gemvc/helper`](https://packagist.org/packages/gemvc/helper)
+
+### Added — `TypeChecker` schema types (v1.1.0)
+
+| Type | Description | `$options` |
+|------|-------------|------------|
+| `decimal` | Fixed-precision numeric string; default `DECIMAL(10,2)` | `precision`, `scale`, `min`, `max` |
+| `decimal:P,S` | Custom precision/scale (e.g. `decimal:12,4`) | same (type string overrides defaults) |
+| `hex` | Hexadecimal `[0-9a-fA-F]`, no `0x` prefix | `minLength`, `maxLength` |
+| `uuid` | RFC 4122 UUID (versions 1–5) | — |
+| `slug` | Lowercase URL slug (`my-product-123`) | — |
+| `positive_int` | Integer &gt; 0, no leading zeros | `min`, `max` |
+| `timestamp` | Non-negative Unix seconds | `min`, `max` |
+| `jsonb` | Alias of `json` (valid JSON string); use in `$_type_map` for PostgreSQL **JSONB** | — |
+
+All type names are **case-insensitive**. Existing types (`string`, `int`, `float`, `email`, `json`, …) are unchanged.
+
+### Usage examples
+
+```php
+$this->request->definePostSchema([
+    'price'     => 'decimal',
+    'token'     => 'hex',
+    'user_id'   => 'uuid',
+    'slug'      => 'slug',
+    'page'      => 'positive_int',
+    'created'   => 'timestamp',
+    'meta'      => 'jsonb',   // same validation as json; library maps to PostgreSQL JSONB
+]);
+```
+
+Use `decimal` for money (not `float`). JSON money values should be strings (`"19.99"`) for exact round-trip.
+
+**Valid / invalid highlights:**
+
+| Type | Valid | Invalid |
+|------|-------|---------|
+| `decimal` | `"19.99"`, `"0.00"` | `"1e5"`, `"10.999"` (scale 2) |
+| `hex` | `"deadbeef"` | `"0xab"`, `"ghij"` |
+| `uuid` | `"550e8400-e29b-41d4-a716-446655440000"` | `"not-a-uuid"` |
+| `slug` | `"my-product"` | `"My_Product"`, `"-bad"` |
+| `positive_int` | `1`, `"42"` | `0`, `"-1"`, `"01"` |
+| `timestamp` | `0`, `"1704067200"` | `-1`, `"1.5"` |
+| `jsonb` | `"{"a":1}"`, `"[1,2]"` (same as `json`) | `"not json"` |
+
+### Unchanged
+
+- All existing types (`float`, `int`, `string`, …) — no breaking changes
+- Namespace `Gemvc\Helper\`
+
+### Requires (consumer)
+
+- `gemvc/library` **5.10.0+** for full stack (DB + Request getters). Helper 1.1.0 alone only adds validation.
+
+---
+
+# Version 1.0.0
 
 **Release date:** 6 June 2026  
 **Tag:** `v1.0.0`  
@@ -114,9 +178,8 @@ The repo includes HTTP stubs under `stubs/` (dev autoload only) so unit tests an
 
 ---
 
-## Known limitations
+## Known limitations (v1.0)
 
-- **PHPStan:** 4 pre-existing static-analysis issues carried over from the original `src/helper/` code in `gemvc/library`. Behaviour is unchanged; cleanup is planned in a future release.
 - **TraceKit legacy:** `TraceKitToolkit` and `TraceKitModel` remain for compatibility. Future removal will happen in this package only.
 - **Runtime coupling:** `ChatGptClient` and TraceKit classes depend on `Gemvc\Http\*` from `gemvc/library` at runtime.
 

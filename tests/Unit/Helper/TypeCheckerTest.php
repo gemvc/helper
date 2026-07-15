@@ -304,6 +304,15 @@ class TypeCheckerTest extends TestCase
         $this->assertFalse(TypeChecker::check('json', []));
         $this->assertFalse(TypeChecker::check('json', null));
     }
+
+    public function testCheckJsonb(): void
+    {
+        $this->assertTrue(TypeChecker::check('jsonb', '{"key": "value"}'));
+        $this->assertTrue(TypeChecker::check('jsonb', '[1, 2, 3]'));
+        $this->assertTrue(TypeChecker::check('JSONB', '{"a":1}'));
+        $this->assertFalse(TypeChecker::check('jsonb', 'not json'));
+        $this->assertFalse(TypeChecker::check('jsonb', '{invalid}'));
+    }
     
     // ============================================
     // IP Address Tests
@@ -392,6 +401,132 @@ class TypeCheckerTest extends TestCase
         $this->assertTrue(TypeChecker::check('INT', 123));
         $this->assertTrue(TypeChecker::check('BOOL', true));
         $this->assertTrue(TypeChecker::check('EMAIL', 'user@example.com'));
+    }
+
+    // ============================================
+    // Decimal Tests (v1.1.0)
+    // ============================================
+
+    public function testCheckDecimalDefault(): void
+    {
+        $this->assertTrue(TypeChecker::check('decimal', '19.99'));
+        $this->assertTrue(TypeChecker::check('decimal', '0'));
+        $this->assertTrue(TypeChecker::check('decimal', '0.00'));
+        $this->assertTrue(TypeChecker::check('decimal', 0));
+        $this->assertTrue(TypeChecker::check('decimal', 19.99));
+        $this->assertFalse(TypeChecker::check('decimal', 'abc'));
+        $this->assertFalse(TypeChecker::check('decimal', ''));
+        $this->assertFalse(TypeChecker::check('decimal', null));
+        $this->assertFalse(TypeChecker::check('decimal', '1e5'));
+        $this->assertFalse(TypeChecker::check('decimal', '19.99 USD'));
+    }
+
+    public function testCheckDecimalWithPrecisionScale(): void
+    {
+        $this->assertTrue(TypeChecker::check('decimal:12,4', '12345678.1234'));
+        $this->assertFalse(TypeChecker::check('decimal:12,4', '12345678.12345'));
+        $this->assertFalse(TypeChecker::check('decimal:0,2', '19.99'));
+    }
+
+    public function testCheckDecimalNegative(): void
+    {
+        $this->assertTrue(TypeChecker::check('decimal', '-10.50'));
+    }
+
+    public function testCheckDecimalZero(): void
+    {
+        $this->assertTrue(TypeChecker::check('decimal', '0'));
+        $this->assertTrue(TypeChecker::check('decimal', '0.00'));
+        $this->assertTrue(TypeChecker::check('decimal', -0.0));
+    }
+
+    public function testCheckDecimalWithMinMax(): void
+    {
+        $this->assertTrue(TypeChecker::check('decimal', '5.00', ['min' => '0.01', 'max' => '10.00']));
+        $this->assertFalse(TypeChecker::check('decimal', '0.00', ['min' => '0.01']));
+        $this->assertFalse(TypeChecker::check('decimal', '10.01', ['max' => '10.00']));
+    }
+
+    public function testCheckDecimalCaseInsensitive(): void
+    {
+        $this->assertTrue(TypeChecker::check('DECIMAL', '19.99'));
+        $this->assertTrue(TypeChecker::check('Decimal:10,2', '99999999.99'));
+    }
+
+    public function testCheckDecimalVerificationMatrix(): void
+    {
+        $this->assertFalse(TypeChecker::check('decimal', '10.999'));
+        $this->assertFalse(TypeChecker::check('decimal', '100000000.00'));
+        $this->assertTrue(TypeChecker::check('float', '19.99'));
+    }
+
+    // ============================================
+    // Schema types (v1.1.0)
+    // ============================================
+
+    public function testCheckHex(): void
+    {
+        $this->assertTrue(TypeChecker::check('hex', 'deadbeef'));
+        $this->assertTrue(TypeChecker::check('hex', 'A1B2C3'));
+        $this->assertTrue(TypeChecker::check('hex', 'a1b2', ['minLength' => 4, 'maxLength' => 8]));
+        $this->assertFalse(TypeChecker::check('hex', '0xdead'));
+        $this->assertFalse(TypeChecker::check('hex', 'ghij'));
+        $this->assertFalse(TypeChecker::check('hex', ''));
+        $this->assertFalse(TypeChecker::check('hex', 123));
+    }
+
+    public function testCheckUuid(): void
+    {
+        $this->assertTrue(TypeChecker::check('uuid', '550e8400-e29b-41d4-a716-446655440000'));
+        $this->assertTrue(TypeChecker::check('uuid', '550E8400-E29B-41D4-A716-446655440000'));
+        $this->assertFalse(TypeChecker::check('uuid', 'not-a-uuid'));
+        $this->assertFalse(TypeChecker::check('uuid', '550e8400-e29b-41d4-a716-44665544000'));
+        $this->assertFalse(TypeChecker::check('uuid', '00000000-0000-0000-0000-000000000000'));
+    }
+
+    public function testCheckSlug(): void
+    {
+        $this->assertTrue(TypeChecker::check('slug', 'my-product'));
+        $this->assertTrue(TypeChecker::check('slug', 'item123'));
+        $this->assertTrue(TypeChecker::check('slug', 'a-b-c-9'));
+        $this->assertFalse(TypeChecker::check('slug', 'My-Product'));
+        $this->assertFalse(TypeChecker::check('slug', 'my_product'));
+        $this->assertFalse(TypeChecker::check('slug', '-leading'));
+        $this->assertFalse(TypeChecker::check('slug', 'trailing-'));
+    }
+
+    public function testCheckPositiveInt(): void
+    {
+        $this->assertTrue(TypeChecker::check('positive_int', 1));
+        $this->assertTrue(TypeChecker::check('positive_int', 42));
+        $this->assertTrue(TypeChecker::check('positive_int', '10'));
+        $this->assertTrue(TypeChecker::check('positive_int', '25', ['min' => 10, 'max' => 100]));
+        $this->assertFalse(TypeChecker::check('positive_int', 0));
+        $this->assertFalse(TypeChecker::check('positive_int', -5));
+        $this->assertFalse(TypeChecker::check('positive_int', '01'));
+        $this->assertFalse(TypeChecker::check('positive_int', '1.5'));
+        $this->assertFalse(TypeChecker::check('positive_int', '1e5'));
+    }
+
+    public function testCheckTimestamp(): void
+    {
+        $this->assertTrue(TypeChecker::check('timestamp', 0));
+        $this->assertTrue(TypeChecker::check('timestamp', 1704067200));
+        $this->assertTrue(TypeChecker::check('timestamp', '1704067200'));
+        $this->assertTrue(TypeChecker::check('timestamp', '1000', ['min' => 500, 'max' => 2000]));
+        $this->assertFalse(TypeChecker::check('timestamp', -1));
+        $this->assertFalse(TypeChecker::check('timestamp', '1.5'));
+        $this->assertFalse(TypeChecker::check('timestamp', '1e5'));
+        $this->assertFalse(TypeChecker::check('timestamp', ''));
+    }
+
+    public function testCheckNewTypesCaseInsensitive(): void
+    {
+        $this->assertTrue(TypeChecker::check('HEX', 'abc123'));
+        $this->assertTrue(TypeChecker::check('UUID', '550e8400-e29b-41d4-a716-446655440000'));
+        $this->assertTrue(TypeChecker::check('SLUG', 'my-item'));
+        $this->assertTrue(TypeChecker::check('POSITIVE_INT', 5));
+        $this->assertTrue(TypeChecker::check('TIMESTAMP', '12345'));
     }
 }
 
